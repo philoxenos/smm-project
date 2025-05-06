@@ -1,7 +1,7 @@
 <template>
   <div class="post-detail-view">
-    <div v-if="loading">Loading post...</div>
-    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="loading" class="center-text">Loading post...</div>
+    <div v-if="error" class="error center-text">{{ error }}</div>
     <PostCard
       v-if="post && !loading"
       :post="post"
@@ -12,7 +12,9 @@
       @delete="deletePost"
       @view="goBack"
     />
-    <button v-if="!loading && post" @click="goBack">Back</button>
+    <div class="actions-row" v-if="!loading && post">
+      <button class="btn btn-secondary" @click="goBack">Back</button>
+    </div>
   </div>
 </template>
 
@@ -94,6 +96,39 @@ onMounted(fetchPost)
 </script>
 
 <style scoped>
-.post-detail-view { max-width: 600px; margin: 0 auto; }
-.error { color: red; margin-top: 1em; }
+.post-detail-view {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 700px;
+  margin: 3em auto 0 auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  padding: 2.5em 2em 2em 2em;
+}
+.center-text {
+  text-align: center;
+  margin: 2em 0;
+  width: 100%;
+}
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5em;
+  width: 100%;
+}
+.error {
+  color: #e74c3c;
+  margin-top: 1em;
+  text-align: center;
+}
+@media (max-width: 800px) {
+  .post-detail-view {
+    padding: 1.2em 0.5em;
+    max-width: 98vw;
+  }
+}
 </style>

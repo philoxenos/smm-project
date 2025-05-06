@@ -58,6 +58,14 @@
   font-weight: normal;
 }
 
+/* Add TwitterChirp font-face if available, otherwise fallback to system fonts */
+@font-face {
+  font-family: 'TwitterChirp';
+  src: local('Chirp'), local('TwitterChirp');
+  font-display: swap;
+  /* If you have the font files, add src: url('/path/to/Chirp.woff2') format('woff2'); */
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);
@@ -67,6 +75,7 @@ body {
     background-color 0.5s;
   line-height: 1.6;
   font-family:
+    'Franklin Gothic',
     Inter,
     -apple-system,
     BlinkMacSystemFont,

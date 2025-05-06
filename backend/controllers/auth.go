@@ -12,6 +12,7 @@ import (
 
 	"backend/models"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -22,7 +23,7 @@ func MicrosoftLogin(c *gin.Context) {
 	redirectURI := os.Getenv("MICROSOFT_REDIRECT_URI")
 	tenantID := os.Getenv("MICROSOFT_TENANT_ID")
 	scope := url.QueryEscape("User.Read openid email profile")
-	authURL := fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/v2.0/authorize?client_id=%s&response_type=code&redirect_uri=%s&response_mode=query&scope=%s", tenantID, clientID, url.QueryEscape(redirectURI), scope)
+	authURL := fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/v2.0/authorize?client_id=%s&response_type=code&redirect_uri=%s&response_mode=query&scope=%s&prompt=select_account", tenantID, clientID, url.QueryEscape(redirectURI), scope)
 	c.Redirect(http.StatusFound, authURL)
 }
 
@@ -135,6 +136,17 @@ func MicrosoftCallback(c *gin.Context) {
 
 // GET /auth/logout
 func Logout(c *gin.Context) {
-	// For JWT, logout is handled on the client by deleting the token
-	c.JSON(http.StatusOK, gin.H{"message": "Logged out"})
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
+
+	// Microsoft logout endpoint
+	msTenant := os.Getenv("MICROSOFT_TENANT_ID")
+	frontendURL := os.Getenv("APP_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:5173"
+	}
+	logoutURL := "https://login.microsoftonline.com/" + msTenant + "/oauth2/v2.0/logout?post_logout_redirect_uri=" + url.QueryEscape(frontendURL+"/login")
+
+	c.Redirect(http.StatusFound, logoutURL)
 }

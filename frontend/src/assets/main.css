@@ -1,9 +1,15 @@
 @import './base.css';
 
+body {
+  background: #fff !important;
+  color: #222;
+  margin: 0;
+  min-height: 100vh;
+}
+
 #app {
-  max-width: 1280px;
+  max-width: fit-content;
   margin: 0 auto;
-  padding: 2rem;
   font-weight: normal;
 }
 
@@ -13,6 +19,16 @@ a,
   color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
   padding: 3px;
+}
+
+/* Remove forced blue highlight from accessibility/extension */
+*:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #42b98333;
+}
+
+h1, h2, h3, h4, h5, h6, button, .btn, .center-text {
+  color: inherit !important;
 }
 
 @media (hover: hover) {
@@ -30,6 +46,64 @@ a,
   #app {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
   }
+}
+
+/* Modern button styles */
+.btn {
+  display: inline-block;
+  font-size: 1em;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.3em;
+  margin: 0.2em 0.3em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+  background: #f5f5f5;
+  color: #222;
+}
+.btn:hover, .btn:focus {
+  background: #222;
+  color: #fff;
+}
+.btn-primary {
+  background: #42b983;
+  color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background: #369870;
+  color: #fff;
+}
+.btn-secondary {
+  background: #2c3e50;
+  color: #fff;
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background: #1a232e;
+  color: #fff;
+}
+.btn-danger {
+  background: #e74c3c;
+  color: #fff;
+}
+.btn-danger:hover, .btn-danger:focus {
+  background: #c0392b;
+  color: #fff;
+}
+
+/* Card style utility */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 1.5em 2em;
+  margin-bottom: 1.5em;
+}
+
+/* Utility classes */
+.center-text {
+  text-align: center;
+  margin: 2em 0;
 }

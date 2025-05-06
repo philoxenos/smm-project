@@ -47,7 +47,7 @@ async function fetchPost() {
   }
 }
 
-async function handleSubmit({ content: newContent, file }) {
+async function handleSubmit({ content: newContent, file, imageRemoved }) {
   error.value = ''
   if (!token.value) {
     router.push('/login')
@@ -56,6 +56,9 @@ async function handleSubmit({ content: newContent, file }) {
   const formData = new FormData()
   formData.append('content', newContent)
   if (file) formData.append('image', file)
+  if (isEdit && imageRemoved && !file) {
+    formData.append('remove_image', 'true')
+  }
   try {
     let url = `${backendUrl}/posts/`
     let method = 'POST'
@@ -79,5 +82,28 @@ onMounted(fetchPost)
 </script>
 
 <style scoped>
-.error { color: red; margin-top: 1em; }
+.post-form-view {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 700px;
+  margin: 3em auto 0 auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  padding: 2.5em 2em 2em 2em;
+}
+.error {
+  color: #e74c3c;
+  margin-top: 1em;
+  text-align: center;
+}
+@media (max-width: 800px) {
+  .post-form-view {
+    padding: 1.2em 0.5em;
+    max-width: 98vw;
+  }
+}
 </style>

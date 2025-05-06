@@ -68,14 +68,24 @@ func UpdatePost(c *gin.Context) {
 	if content != "" {
 		post.Content = content
 	}
+	removeImage := c.PostForm("remove_image")
 	file, err := c.FormFile("image")
 	if err == nil && file != nil {
 		filename := fmt.Sprintf("%d_%d%s", userID, time.Now().Unix(), filepath.Ext(file.Filename))
 		uploadPath := filepath.Join("uploads", filename)
 		os.MkdirAll("uploads", 0755)
 		if err := c.SaveUploadedFile(file, uploadPath); err == nil {
+			// Delete old image if exists
+			if post.ImageURL != "" {
+				os.Remove(post.ImageURL[1:]) // remove leading slash
+			}
 			post.ImageURL = "/" + uploadPath
 		}
+	} else if removeImage == "true" {
+		if post.ImageURL != "" {
+			os.Remove(post.ImageURL[1:]) // remove leading slash
+		}
+		post.ImageURL = ""
 	}
 	post.UpdatedAt = time.Now().Unix()
 	models.DB.Save(&post)
@@ -94,6 +104,10 @@ func DeletePost(c *gin.Context) {
 	if post.UserID != uint(userID) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Not your post"})
 		return
+	}
+	// Delete image file if exists
+	if post.ImageURL != "" {
+		os.Remove(post.ImageURL[1:]) // remove leading slash
 	}
 	models.DB.Delete(&post)
 	c.JSON(http.StatusOK, gin.H{"message": "Post deleted"})

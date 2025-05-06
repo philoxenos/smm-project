@@ -37,7 +37,25 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 			return
 		}
-		c.Set("user_id", claims["user_id"])
+		// Fix: ensure user_id is always set as int
+		userIDRaw, ok := claims["user_id"]
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "No user_id in token"})
+			return
+		}
+		var userID int
+		switch v := userIDRaw.(type) {
+		case float64:
+			userID = int(v)
+		case int:
+			userID = v
+		case int64:
+			userID = int(v)
+		default:
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid user_id type in token"})
+			return
+		}
+		c.Set("user_id", userID)
 		c.Next()
 	}
 }

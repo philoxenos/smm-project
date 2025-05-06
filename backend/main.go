@@ -9,6 +9,8 @@ import (
 	"backend/models"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -28,6 +30,10 @@ func main() {
 
 	r := gin.Default()
 
+	// Session middleware (for Microsoft OAuth logout)
+	store := cookie.NewStore([]byte(os.Getenv("JWT_SECRET")))
+	r.Use(sessions.Sessions("smm-session", store))
+
 	// CORS middleware
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{frontendURL},
@@ -35,6 +41,9 @@ func main() {
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
 	}))
+
+	// Serve uploads directory for images
+	r.Static("/uploads", "uploads")
 
 	// Initialize MySQL connection
 	models.InitDB()

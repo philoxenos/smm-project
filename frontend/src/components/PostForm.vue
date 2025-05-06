@@ -6,7 +6,7 @@
     </div>
     <div>
       <label>Image (optional)</label><br />
-      <ImageUploader v-model="file" :initial-url="initialImageUrl" />
+      <ImageUploader v-model="file" :initial-url="initialImageUrl" @update:modelValue="handleImageChange" />
     </div>
     <div style="margin-top:1em;">
       <button type="submit">{{ submitLabel }}</button>
@@ -30,11 +30,24 @@ const emit = defineEmits(['submit', 'cancel'])
 
 const content = ref(props.initialContent)
 const file = ref(null)
+const imageRemoved = ref(false)
 
 watch(() => props.initialContent, val => { content.value = val })
+watch(() => props.initialImageUrl, val => {
+  if (val) imageRemoved.value = false
+})
+
+function handleImageChange(newFile) {
+  file.value = newFile
+  if (!newFile && props.initialImageUrl) {
+    imageRemoved.value = true
+  } else if (newFile) {
+    imageRemoved.value = false
+  }
+}
 
 function handleSubmit() {
-  emit('submit', { content: content.value, file: file.value })
+  emit('submit', { content: content.value, file: file.value, imageRemoved: imageRemoved.value })
 }
 </script>
 
